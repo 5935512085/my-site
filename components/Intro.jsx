@@ -5,8 +5,7 @@ import Circle from "./Circle"
 const Intro =()=>{
     return (
         <div className={style.container}>
-            <Circle backgroundColor="yellow" top="-50vh" left="-50vh" />
-            <Circle backgroundColor="yellow" right="-40vh" />
+            
             <div className={style.card}>
                 <h1 className={style.title}>
                     <span className={style.brand}> AKYR0S
@@ -19,7 +18,7 @@ const Intro =()=>{
                 <button className={style.button}> รายละเอียดเพิ่มเติม </button>
             </div>
             <div className={style.card}>
-                <Image src="/img/person.png" 
+                <Image src="/img/akyrosw.gif" 
                 width="100%" hight="100%" 
                 layout="fill" 
                 objectFit="cover"

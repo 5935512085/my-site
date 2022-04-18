@@ -1,10 +1,11 @@
 import style from "../styles/Navbar.module.css"
 import Link from "next/link"
-
+import Image from "next/image"
 const Navbar = () => {
     return (
         <div className={style.container}>
-            <Link href='/'> AKYROS </Link>
+            <Image src="/img/logo2.png" href ='/' height="60px" width="180px"
+                alt=""  />
             <ul className={style.list}>
                 <li className={style.listItem}>
                 <Link href='/XYZ/Design'> Design </Link>

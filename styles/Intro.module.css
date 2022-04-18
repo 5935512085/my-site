@@ -21,7 +21,9 @@
     margin: 0;
 }
 .brand{
-    color: darkcyan;
+
+    font-weight: bold;
+    color: #FF5757;
 }
 .descrip{
     font-size: 20px;
