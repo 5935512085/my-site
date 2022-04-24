@@ -1,6 +1,12 @@
 
+import React, { useState } from 'react'
+import axios from 'axios'
+import useSWR, { mutate } from 'swr'
+import { useSession, signIn, signOut } from "next-auth/react"
+
 
 export const Login =()=>{
+
  return(
      <div className= " bg-slate-300 w-screen h-screen ">
          <div className=" flex flex-row justify-center ">
@@ -12,45 +18,52 @@ export const Login =()=>{
                             <input
                                 className="flex w-3/4 rounded-lg px-2 mx-2 bg-slate-200"
                                 type="text"
-                                name="addTask"
+                                name="addUser"
+                                onChange={(e) => setUsername(e.target.value)}
                             /></div>
                         < div className="flex flex-row p-1 mx-1 ">
                              <h2 className=" w-1/4">รหัสผ่าน:</h2>
                             <input
                                 className="flex w-3/4 rounded-lg px-2 mx-2 bg-slate-200"
                                 type="text"
-                                name="addTask"
+                                name="addPass"
+                                onChange={(e) => setPass(e.target.value)}
                             /></div>
                         < div className="flex flex-row p-1 mx-1 ">
                              <h2 className=" w-1/4">ชื่อ :</h2>
                             <input
                                 className="flex w-3/4 rounded-lg px-2 mx-2 bg-slate-200"
                                 type="text"
-                                name="addTask"
+                                name="addName"
+                                onChange={(e) => setName(e.target.value)}
                             /></div>
                         <div className="flex flex-row p-1 mx-1 ">
                             <h2 className=" w-1/4">นามสกุล :</h2>
                             <input
                                 className="flex w-3/4 rounded-lg px-2 mx-2 bg-slate-200"
                                 type="text"
-                                name="addTask"
+                                name="addSurname"
+                                onChange={(e) => setSurname(e.target.value)}
                             /></div>
                         <div className="flex flex-row p-1 mx-1">
                             <h2 className=" w-1/4">เบอร์โทรศัพท์ :</h2>
                             <input
                                 className="flex w-3/4 rounded-lg  px-2 mx-2 bg-slate-200"
                                 type="text"
-                                name="addTask"
+                                name="addPhone"
+                                onChange={(e) => setPhone(e.target.value)}
                             /></div>
                         <div className="flex flex-row p-1 mx-1">
                             <h2 className=" w-1/4"> e-mail :</h2>
                             <input
                                 className="flex rounded-lg px-2 mx-2 bg-slate-200 w-3/4"
                                 type="text"
-                                name="addTask"
+                                name="addEmail"
+                                onChange={(e) => setEmail(e.target.value)}
                             /></div>
                         <div className="flex flex-row justify-center">
-                            <button className=" w-4/5 p-1 m-1 bg-yellow-300 hover:bg-red-300 rounded-lg ">
+                            <button className=" w-4/5 p-1 m-1 bg-yellow-300 hover:bg-red-300 rounded-lg "
+                                onChange={(e) => addUser(e.target.value)}>
                                 ลงทะเบียน
                             </button>
                             </div>
@@ -69,6 +82,7 @@ export const Login =()=>{
                                 className="flex w-2/3 rounded-lg px-2 mx-2 bg-slate-200"
                                 type="text"
                                 name="addTask"
+                                onChange={(e) => setUser(e.target.value)} 
                             /></div>
                         <div className="flex flex-row p-1 mx-1 ">
                             <h2 className=" w-1/3">รหัสผ่าน:</h2>
@@ -76,9 +90,11 @@ export const Login =()=>{
                                 className="flex w-2/3 rounded-lg px-2 mx-2 bg-slate-200"
                                 type="text"
                                 name="addTask"
+                                onChange={(e) => setPass(e.target.value)}
                             /></div>
                         <div className="flex flex-row justify-center">
-                            <button className=" w-4/5 p-1 m-1 bg-yellow-300 hover:bg-red-300 rounded-lg ">
+                            <button className=" w-4/5 p-1 m-1 bg-yellow-300 hover:bg-red-300 rounded-lg "
+                                onChange={() => signIn()}>
                                 เข้าสู่ระบบ
                             </button>
                             </div>
