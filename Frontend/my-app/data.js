@@ -61,6 +61,7 @@ export const data =[
     image: "EXTRACT.gif",
     },
 ]
+
 export const users =[
     {   id:1,
         job:"logo",
