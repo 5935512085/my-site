@@ -4,7 +4,7 @@ import axios from 'axios'
 import config from "../config/config";
 import { useRouter } from "next/router";
 
-export const login =(token)=>{
+export const login =({token})=>{
 
     const router = useRouter();
     const [username, setUsername] = useState("");
@@ -74,8 +74,8 @@ export const login =(token)=>{
           )
           .then((res) => {
             console.log(res);
-            localStorage.setUsers("userid", res.data.user.id);
-            window.location.replace("/");
+           // localStorage.setUsers("userid", res.data.user.id);
+            window.location.replace("/service");
           })
           .catch((error) => {
             console.log(error);

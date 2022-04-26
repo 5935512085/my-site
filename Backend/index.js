@@ -4,15 +4,13 @@ const express = require("express"),
   port = process.env.PORT || 80,
   cors = require("cors"),
   cookie = require("cookie");
-
+  
+require("./passport.js");
 const bcrypt = require("bcrypt");
 const e = require("express");
 
 const db = require("./database.js");
 let users = db.users;
-
-
-require("./passport.js");
 
 const router = require("express").Router(),
   jwt = require("jsonwebtoken");
@@ -46,7 +44,7 @@ router.get("/profile",
   }
 );
 
-router.post("/register", async (req, res ,next) => {
+router.post("/login", async (req, res ,next) => {
     passport.authenticate("local", { session: false }, (err, user, info) => {
         console.log("Login: ", req.body, user, err, info);
         if (err) return next(err);
@@ -68,7 +66,9 @@ router.post("/register", async (req, res ,next) => {
           return res.json({ user, token });
         } else return res.status(422).json(info);
       })(req, res, next);
+});
 
+router.post("/register", async(req,res)=>{
   try {
     const { username, email, password, name, surname, phone } = req.body;
     if (!username || !password || !name || !surname || !email || !phone )
@@ -84,73 +84,78 @@ router.post("/register", async (req, res ,next) => {
   } catch {
     res.status(422).json({ message: "Cannot register" });
   }
-});
+
+})
+
 
 let tasks = db.tasks;
-app.get('/designorder', async (req,res) => {
-  res.json(tasks)
-    try {
-      console.log(req.id)
-      let task = tasks.filter((item) => item.id== req.id);
-      console.log(task);
-      res.status(200).json({ message: "Get tasks success", data: tasks });
-    } catch {
-      res.status(422).json({ message: "Cannot get tasks" });
-    }
+router.get("/designorder", (req, res) => {
+  try {
+    console.log(req.headers.search);
+    let ts = tasks.tasks.filter((item) => item.userid == req.headers.search);
+    console.log(ts);
+    res.status(200).json({ message: "Get tasks success", data: tasks });
+  } catch {
+    res.status(422).json({ message: "Cannot get tasks" });
+  }
+});
 
-    try {
-      console.log("userid", req.userid);
-      console.log("Tasks name", req.namepro);
-      let inx = tasks.findIndex((item) => item.id === req.id);
-      console.log("inx", inx);
-      if (inx !== -1) {
-        let idx = await tasks[inx].namepro.findIndex(
-          (item) => item.namepro == req.namepro
-        );
-        console.log("idx", idx);
-        tasks[inx].namepro.splice(idx, 1);
-      }
-      console.log("inx", inx);
-      res.status(200).json({ message: "Delete success" });
-    } catch {
-      res.status(422).json({ message: "Cannot delete" });
-    }
-})
 router.post("/designorder", async (req, res) => {
   try {
-    const { namepro,service,style,colors,content,desc,price,due,sign } = req.body;
-    if (db.setTasks(namepro) === db.NOT_FOUND) {
-      let id = tasks.length ? tasks[tasks.length - 1].id + 1 : 1;
-      let list_tasks = [
+    const { userid, project, style, service, color, sign,due, price,content,desc } = req.body;
+    if (db.checkExistingUidOrder(userid) === db.NOT_FOUND) {
+      let id = tasks.tasks.length ? tasks.tasks[tasks.tasks.length - 1].id + 1 : 1;
+      console.log("1");
+      let products = [
         {
-          tasksname: namepro,
-          service:service,
-          style:style,
-          color:colors,
+          project: project,
+          style :style,
+          service : service,
+          color : color,
+          sign: sign,
+          due:due,
           content:content,
           desc:desc,
-          due:due,
-          sign:sign,
           price: price,
         },
       ];
-      tasks.push({ id, userid, list_tasks });
+      tasks.tasks.push({ id, products });
     } else {
-      let TaskOrder = {
-          tasksname: namepro,
-          service:service,
-          style:style,
-          color:colors,
+      console.log("2");
+      let productObject = {
+          project: project,
+          style :style,
+          service : service,
+          color : color,
+          sign: sign,
+          due:due,
           content:content,
           desc:desc,
-          due:due,
-          sign:sign,
           price: price,
-      }; tasks.push(TaskOrder)
+      };
+      tasks.tasks.map(async (item) => {
+        if (item.userid === userid) {
+          let isExisting = await item.products.filter(
+            (pd) => pd.productName == productName
+          );
+          console.log("isExisting", isExisting[0]);
+          if (isExisting[0] === undefined) {
+            console.log("3");
+            item.products.push(productObject);
+          } else {
+            console.log("4");
+            item.products.map((pd) => {
+              if (pd.productName === productName) {
+                pd.quantity = pd.quantity + quantity;
+              }
+            });
+          }
+        }
+      });
     }
-    res.status(200).json({ message: "Add to cart success" });
+    res.status(200).json({ message: "Add to order success" });
   } catch {
-    res.status(422).json({ message: "Cannot add to cart" });
+    res.status(422).json({ message: "Cannot add to order" });
   }
 });
 

@@ -1,9 +1,30 @@
 import style from "../styles/Navbar.module.css"
 import { useRouter } from "next/router";
+import axios from 'axios'
+import config from "../config/config";
 
+let code ="" 
+
+const logoutcheck = async (req, res) => {
+  let result = await axios
+    .get(
+      `${config.URL}/logout`,
+      { withCredentials: true }
+    )
+    .then((res) => {
+      console.log(res);
+      console.log(result);
+     // localStorage.setUsers("userid", res.data.user.id);
+      window.location.replace("/");
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
   const login = (token) =>{
+    console.log(token)
     const router = useRouter();
-    if(token!='')
+    if(token=='')
       return (
         <button className="bg-yellow-300 hover:bg-orange-500 rounded-xl text-blue-500 hover:text-white mx-1 px-2"
                     onClick={() => {
@@ -12,8 +33,8 @@ import { useRouter } from "next/router";
     else return (
         <button className="bg-blue-300 hover:bg-orange-500 rounded-xl text-blue-500 hover:text-white mx-1 px-2"
                     onClick={() => {
-                      router.push("/");
-                    }} > Sign out</button>
+                      logoutcheck()
+                    }} > Log out</button>
       )
   }
 const Navbar = () => {
@@ -41,12 +62,14 @@ const Navbar = () => {
                 </li>
             </ul>
             <div className="flex flex-wrap">
-                {login()}
+                {login(code)}
                 </div>
         </div>
     )
 }
 export default Navbar
-export function getServerSideProps({ req }) {
+export function getServerSideProps({ req }) 
+{
+  code = req.cookies.token
   return { props: { token: req.cookies.token || "" } };
 }

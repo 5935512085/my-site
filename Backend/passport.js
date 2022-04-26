@@ -17,9 +17,9 @@
             console.log('User: ', username, password)
             const index = db.checkExistingUser(username)
             if (index !== db.NOT_FOUND && await db.isValidUser(username, password)) {
-                const { id, user, pass } = users.users[index]
+                const { id, user, pass, name,surname,email,phone} = users.users[index]
                 return cb(null,
-                    { id, user, pass},
+                    { id, user, pass,name,surname,email,phone},
                     { message: 'Logged In Successfully' })
             }
             else

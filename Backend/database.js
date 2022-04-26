@@ -8,10 +8,15 @@ let users = {
         email:'affan2409@gmail.com',phone:"0937255297" ,
     },
   ],
-  
 };
-let tasks =[
-    { service:"service",namepro:"Name Project",sign:"Bird",price:"500",style:" Drawing",desc:"-",content:"3 Bird 3 Directions",color:"blue,red,green",due:"-" }]
+
+let tasks = {
+  tasks :[
+    { service:"service",namepro:"Name Project",sign:"Bird",price:"500",style:" Drawing",desc:"-",content:"3 Bird 3 Directions",color:"blue,red,green",due:"-" },
+  ],
+};
+
+
 
 const SECRET = "your_jwt_secret";
 const NOT_FOUND = -1;
@@ -33,10 +38,13 @@ exports.setUsers = function (_users) {
 // === validate username/password ===
 exports.isValidUser = async (username, password) => {
   const index = users.users.findIndex((item) => item.username === username);
-  return await bcrypt.compare(password, users.users[index].password);
+  return users.users[index].password
 };
 
 // return -1 if user is not existing
 exports.checkExistingUser = (username) => {
   return users.users.findIndex((item) => item.username === username);
+};
+exports.checkExistingUidOrder = (uid) => {
+  return cart.cart.findIndex((item) => item.userid === uid);
 };

@@ -2,6 +2,7 @@ import { useEffect,useState } from 'react'
 import axios from "axios";
 import config from "../config/config";
 
+
 const designorder= ({token}) => {
    const [tasks, setTasks] = useState([])
    const [service, setSur] = useState('')
@@ -14,9 +15,10 @@ const designorder= ({token}) => {
    const [color, setCol] = useState('')
    const [due, setDue] = useState('')
    const [idEdit, setIdEdit] = useState()
-
+   
+   console.log("This is in tasks",tasks)
    async function GETT(){
-    const res = await fetch(`localhost/designorder`)
+    const res = await fetch(`http://localhost/api/designorder`)
     const json = await res.json()
     console.log("This json data",json)
     return json;
@@ -27,8 +29,9 @@ const getTasks = () => {
 
  async function GetTasks(){
      let ts = await getTasks();
+     ts = ts.data.tasks
      console.log(ts)
-     console.log("This ts",ts) 
+     console.log("This is ts",ts) 
      return setTasks(ts)
  }
 
@@ -45,16 +48,16 @@ const getTasks = () => {
 
     const editTask = (id) => {
     setIdEdit(id)
-    const t = tasks.find((task) => +task.id === +id)
-            setSur(t.survice)
-            setNam(t.namepro)
-            setSig(t.sign)
-            setPri(t.price)
-            setSty(t.style)
-            setDes(t.desc)
-            setCon(t.content)
-            setCol(t.color)
-            setDue(t.due)
+    const task = tasks.find((task) => +task.id === +id)
+            setSur(task.survice)
+            setNam(task.namepro)
+            setSig(task.sign)
+            setPri(task.price)
+            setSty(task.style)
+            setDes(task.desc)
+            setCon(task.content)
+            setCol(task.color)
+            setDue(task.due)
     if (+idEdit === +id) { //Press Edit again
         let newTasks = tasks.map((task, index) => {
             if (+task.id === +id){
@@ -76,99 +79,149 @@ const getTasks = () => {
     const addTask = (id) => {
         if (service == "" || namepro =="")
            return;
-        if (tasks.length == 0)
-           setTasks([{ id: 0,survice:'draft', namepro:'draft' }]);
         if(tasks.length <= 9 && tasks != ''){
-            setTasks([...tasks, { id:tasks.length <= 0 ? 1 : tasks[tasks.length - 1].id + 1, service,namepro,sign,price,style,desc,color,due,content}])
+            setTasks([...tasks, { id:tasks.length <= 0 ? 1 : tasks[tasks.length - 1].id + 1, service, namepro, sign, price, style, desc, color, due, content}])
             console.log(tasks)
         }  }
 
     
     const renderTasks = () => {
-        if (tasks !== ''){
+        if (tasks && tasks.length){
             return tasks.map((task, index) => (
                 <li key={index} className="relative bg-orange-200 m-4 border-2 border-double p-8 rounded-lg drop-shadow-lg w-screen">
-                    <div className="flex flex-col bottom-0 right-0 text-xl mr-2 text-white ">{index+1}</div>
+                    <div className="flex flex-col bottom-0 right-0 text-4xl mr-2 "> Order No: {index}</div>
                     {(idEdit !== task.id) ?
                         <div className="text-lg justify-center">
-                            <h1>{tasks.namepro}</h1>
-                            <h1>{tasks.survice}</h1>
-                            <h1>{tasks.style}</h1>
-                            <h1>{tasks.color}</h1>
-                            <h1>{tasks.sign}</h1>
-                            <h1>{tasks.desc}</h1>
-                            <h1>{tasks.price}</h1>
-                            <h1>{tasks.due}</h1>
-                            <p> สถานะ: กำลังตรวจสอบ ..</p>
+                            <div className='flex flex-row'>
+                                <h1 className='flex px-2 w-1/5'>ชื่องาน</h1>
+                                <h1 className='flex px-2 py-1 bg-orange-100 w-4/5 border-b-2 border-dashed border-gray-300'>{task.namepro}</h1>
+                            </div>
+                            <div className='flex flex-row'>
+                                <h1 className='flex px-2 w-1/5'>ประเภทงาน</h1>
+                                <h1 className='flex px-2 py-1 bg-orange-100 w-4/5 border-b-2 border-dashed border-gray-300'>{task.survice}</h1>
+                            </div>
+                            <div className='flex flex-row'>
+                                <h1 className='flex px-2 w-1/5'>สไตล์งาน</h1>
+                                <h1 className='flex px-2 py-1 bg-orange-100 w-4/5 border-b-2 border-dashed border-gray-300'>{task.style}</h1>
+                            </div>
+                            <div className='flex flex-row'>
+                                <h1 className='flex px-2 w-1/5'>ธีมสีที่ใช้</h1>
+                                <h1 className='flex px-2 py-1 bg-orange-100 w-4/5 border-b-2 border-dashed border-gray-300'>{task.color}</h1>
+                            </div>
+                            <div className='flex flex-row'>
+                                <h1 className='flex px-2 w-1/5'>สัญลักษณ์</h1>
+                                <h1 className='flex px-2 py-1 bg-orange-100 w-4/5 border-b-2 border-dashed border-gray-300'>{task.sign}</h1>
+                            </div>
+                            <div className='flex flex-row'>
+                                <h1 className='flex px-2 w-1/5'>เนื้อหาหลักที่ใช้</h1>
+                                <h1 className='flex px-2 py-1 bg-orange-100 w-4/5 border-b-2 border-dashed border-gray-300'>{task.content}</h1>
+                            </div>
+                            <div className='flex flex-row'>
+                                <h1 className='flex px-2 w-1/5'>รายละเอียดเพิ่มเติม</h1>
+                                <h1 className='flex px-2 py-1 bg-orange-100 w-4/5 border-b-2 border-dashed border-gray-300'>{task.desc}</h1>
+                            </div>
+                            <div className='flex flex-row'>
+                                <h1 className='flex px-2 w-1/5'>งบประมาณจ้างงาน</h1>
+                                <h1 className='flex px-2 py-1 bg-orange-100 w-4/5 border-b-2 border-dashed border-gray-300'>{task.price}</h1>
+                            </div>
+                            
+                            <div className='flex flex-row'>
+                                <h1 className='flex px-2 w-1/5'>วันที่รับงาน</h1>
+                                <h1 className='flex px-2 py-1 bg-orange-100 w-4/5 border-b-2 border-dashed border-gray-300'>{task.due}</h1>
+                            </div>
+                            
+                            <p className=' bg-orange-400 px-3 py-2 text-lg my-2'> สถานะ: กำลังตรวจสอบ ..</p>
                             </div> :
                         <div className=' flex flex-col px-2 py-2'>
-                            <div className='justify-center'>
-                            <input
-                            className="w-1/2 bg-yellow-200 text-xl text-black border-2 rounded-lg"
-                            type="text"
-                            name="namepro"
-                            placeholder='ชื่องาน'
-                            value={namepro}
-                            onChange={(e) => setNam(e.target.value)}
-                            />
-                            <input
-                            className="w-1/2 bg-yellow-200 text-xl text-black border-2 rounded-lg"
-                            type="text"
-                            name="survice"
-                            placeholder='ประเภทบริการ'
-                            value={service}
-                            onChange={(e) => setSur(e.target.value)}
-                        />
+                            <div className='flex flex-row py-2 px-2'>
+                            <h1 className='text-xl  w-1/3'> ชื่องาน </h1>
+                                <input
+                                    className="rounded-lg  w-2/3 pl-2 ml-2 mr-4"
+                                    type="text"
+                                    name="addTask"
+                                    placeholder='ชื่อโครงการ หรือ ชื่องาน'
+                                    onChange={(e) => (setNam(e.target.value))}/>
+                            </div>
+                <div className='flex flex-row py-2 px-2'>
+                    <h1 className='text-lgw-1/3 '> ประเภทบริการ </h1>
                         <input
-                            className="w-1/2 bg-yellow-200 text-xl text-black border-2 rounded-lg"
+                            className=" rounded-lg w-2/3 pl-2 ml-2 mr-4"
                             type="text"
-                            name="style"
-                            placeholder='รูปแบบมาตรฐาน ลายเส้น'
-                            value={style}
-                            onChange={(e) => setSty(e.target.value)}
+                            name="addsurvice"
+                            placeholder='ออกแบบโลโก้ หรือ อื่น ๆ'
+                            onChange={(e) => (setSur(e.target.value))}
                         />
+                    </div> 
+               <div className='flex flex-row py-2 px-2'>
+                    <h1 className='text-lg w-1/3'> รูปแบบให้ทำ </h1>
                         <input
-                            className="w-1/2 bg-yellow-200 text-xl text-black border-2 rounded-lg"
+                            className="rounded-lg w-2/3 pl-2 ml-2 mr-4"
                             type="text"
-                            name="color"
-                            placeholder='สีหรือธีมสีที่ใช้'
-                            value={color}
-                            onChange={(e) => setCol(e.target.value)}
-                        /> 
+                            name="addstyle"
+                            placeholder='คลาสสิก ลายเส้น มาตรฐาน'
+                            onChange={(e) => (setSty(e.target.value))}
+                        />
+                    </div> 
+               <div className='flex flex-row py-2 px-2'>
+                    <h1 className='text-lg w-1/3'> ชุดสี </h1>
                         <input
-                            className="w-1/2 bg-yellow-200 text-xl text-black border-2 rounded-lg"
+                            className="rounded-lg pl-2 ml-2 mr-4 w-2/3"
                             type="text"
-                            name="content"
-                            placeholder='คอนเซป หรือ ธีมเนื้อหาหลัก'
-                            value={content}
-                            onChange={(e) => setCon(e.target.value)}
+                            name="addColors"
+                            placeholder='สีดำ แดง เหลือง'
+                            onChange={(e) => (setCol(e.target.value))}
                         />
+                    </div> 
+               <div className='flex flex-row py-2 px-2'>
+                    <h1 className='text-lg w-1/3'> รูปแบบสัญลักษณ์ </h1>
                         <input
-                            className="w-1/2 bg-yellow-200 text-xl text-black border-2 rounded-lg"
+                            className="rounded-lg pl-2 ml-2 mr-4 w-2/3"
                             type="text"
-                            name="description"
-                            placeholder='รายละเอียดเพิ่มเติม'
-                            value={desc}
-                            onChange={(e) => setDes(e.target.value)}
+                            name="addSign"
+                            placeholder='รูปนกบิน'
+                            onChange={(e) => (setSig(e.target.value))}
                         />
-                         <input
-                            className="w-1/2 bg-yellow-200 text-xl text-black border-2 rounded-lg"
+                    </div> 
+               <div className='flex flex-row py-2 px-2'>
+                    <h1 className='text-lg w-1/3 '> เนื้อหาหลักที่ใช้ </h1>
+                        <input
+                            className="rounded-lg pl-2 ml-2 mr-4 w-2/3"
                             type="text"
-                            name="price"
-                            placeholder='งาบประมาณ(บาท)'
-                            value={price}
-                            onChange={(e) => setPri(e.target.value)}
+                            name="addContent"
+                            placeholder='คอนเซปงาน ธีม'
+                            onChange={(e) => (setCon(e.target.value))}
                         />
-                         <input
-                            className="w-1/2 bg-yellow-200 text-xl text-black border-2 rounded-lg"
+                    </div> 
+               <div className='flex flex-row py-2 px-2 '>
+                    <h1 className='text-lg w-1/3'> อธิบายเพิ่มเติม </h1>
+                        <input
+                            className="rounded-lg pl-2 ml-2 mr-4 w-2/3"
                             type="text"
-                            name="due"
-                            placeholder='วัน/เดือน/ปี ที่จะรับงาน'
-                            value={due}
-                            onChange={(e) => setDue(e.target.value)}
+                            name="addDec"
+                            placeholder='รายละเอียดงานอื่น ๆ'
+                            onChange={(e) => (setDes(e.target.value))}
                         />
-                            
-                        </div>
+               </div> 
+               <div className='flex flex-row py-2 px-2'>
+                    <h1 className='text-lg w-1/3 '>รับงานภายในวันที่ </h1>
+                        <input
+                            className="rounded-lg pl-2 ml-2 mr-4 w-2/3"
+                            type="text"
+                            name="adddue"
+                            placeholder='วัน/เดือน/ปี'
+                            onChange={(e) => (setDue(e.target.value))}
+                        />
+                    </div> 
+                <div className='flex flex-row py-2 px-2'>
+                <h1 className=' text-lg w-1/3'>งบประมาณงาน </h1>
+                    <input
+                        className=" rounded-lg pl-2 ml-2 mr-4 w-2/3"
+                        type="text"
+                        name="adddue"
+                        placeholder='จำนวนเงิน(บาท)'
+                        onChange={(e) => (setPri(e.target.value))}
+                    />
+                </div>
                         </div>
                        
                     }
