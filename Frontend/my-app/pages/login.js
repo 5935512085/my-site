@@ -65,7 +65,7 @@ export const login =(token)=>{
             </div>
           );
       };
-      const logincheck = async () => {
+      const logincheck = async (req, res) => {
         let result = await axios
           .post(
             `${config.URL}/login`,
@@ -74,7 +74,7 @@ export const login =(token)=>{
           )
           .then((res) => {
             console.log(res);
-            localStorage.setItem("userid", res.data.user.id);
+            localStorage.setUsers("userid", res.data.user.id);
             window.location.replace("/");
           })
           .catch((error) => {

@@ -9,7 +9,7 @@ const Services = ( {services} ) => {
             <h1 className={style.subtitle}> เรามีบริการที่สามารถช่วยคุณดังนี้ </h1>
             <div className={style.services}>
                 {services.map( service =>(
-                    <Link passHref key={service.id} href={`/Design/${service.name}`}>
+                    <Link passHref key={service.id} href="/designorder">
                     <div className={style.service}>
                         <div className={style.descp}>{service.descp}</div>
                     <span className={style.cat}>{service.title}</span>

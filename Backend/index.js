@@ -10,7 +10,7 @@ const e = require("express");
 
 const db = require("./database.js");
 let users = db.users;
-let cart = db.cart;
+
 
 require("./passport.js");
 
@@ -86,93 +86,82 @@ router.post("/register", async (req, res ,next) => {
   }
 });
 
-// router.get("/cart", (req, res) => {
-//   try {
-//     console.log(req.headers.search);
-//     let carts = cart.cart.filter((item) => item.userid == req.headers.search);
-//     console.log(carts);
-//     res.status(200).json({ message: "Get cart success", data: carts });
-//   } catch {
-//     res.status(422).json({ message: "Cannot get cart" });
-//   }
-// });
+let tasks = db.tasks;
+app.get('/designorder', async (req,res) => {
+  res.json(tasks)
+    try {
+      console.log(req.id)
+      let task = tasks.filter((item) => item.id== req.id);
+      console.log(task);
+      res.status(200).json({ message: "Get tasks success", data: tasks });
+    } catch {
+      res.status(422).json({ message: "Cannot get tasks" });
+    }
 
-// router.get("/deleteProduct", async (req, res) => {
-//   try {
-//     console.log("userid", req.headers.userid);
-//     console.log("productName", req.headers.productname);
-//     let inx = cart.cart.findIndex((item) => item.userid === req.headers.userid);
-//     console.log("inx", inx);
-//     if (inx !== -1) {
-//       let idx = await cart.cart[inx].products.findIndex(
-//         (item) => item.productName == req.headers.productname
-//       );
-//       console.log("idx", idx);
-//       // delete cart.cart[inx].products[idx];
-//       cart.cart[inx].products.splice(idx, 1);
-//     }
-//     console.log("inx", inx);
-//     res.status(200).json({ message: "Delete success" });
-//   } catch {
-//     res.status(422).json({ message: "Cannot delete" });
-//   }
-// });
+    try {
+      console.log("userid", req.userid);
+      console.log("Tasks name", req.namepro);
+      let inx = tasks.findIndex((item) => item.id === req.id);
+      console.log("inx", inx);
+      if (inx !== -1) {
+        let idx = await tasks[inx].namepro.findIndex(
+          (item) => item.namepro == req.namepro
+        );
+        console.log("idx", idx);
+        tasks[inx].namepro.splice(idx, 1);
+      }
+      console.log("inx", inx);
+      res.status(200).json({ message: "Delete success" });
+    } catch {
+      res.status(422).json({ message: "Cannot delete" });
+    }
+})
+router.post("/designorder", async (req, res) => {
+  try {
+    const { namepro,service,style,colors,content,desc,price,due,sign } = req.body;
+    if (db.setTasks(namepro) === db.NOT_FOUND) {
+      let id = tasks.length ? tasks[tasks.length - 1].id + 1 : 1;
+      let list_tasks = [
+        {
+          tasksname: namepro,
+          service:service,
+          style:style,
+          color:colors,
+          content:content,
+          desc:desc,
+          due:due,
+          sign:sign,
+          price: price,
+        },
+      ];
+      tasks.push({ id, userid, list_tasks });
+    } else {
+      let TaskOrder = {
+          tasksname: namepro,
+          service:service,
+          style:style,
+          color:colors,
+          content:content,
+          desc:desc,
+          due:due,
+          sign:sign,
+          price: price,
+      }; tasks.push(TaskOrder)
+    }
+    res.status(200).json({ message: "Add to cart success" });
+  } catch {
+    res.status(422).json({ message: "Cannot add to cart" });
+  }
+});
 
-// router.post("/addtocart", async (req, res) => {
-//   try {
-//     const { userid, productName, quantity, price } = req.body;
-//     if (db.checkExistingUidCart(userid) === db.NOT_FOUND) {
-//       let id = cart.cart.length ? cart.cart[cart.cart.length - 1].id + 1 : 1;
-//       console.log("1");
-//       let products = [
-//         {
-//           productName: productName,
-//           quantity: quantity,
-//           price: price,
-//         },
-//       ];
-//       cart.cart.push({ id, userid, products });
-//     } else {
-//       console.log("2");
-//       let productObject = {
-//         productName: productName,
-//         quantity: quantity,
-//         price: price,
-//       };
-//       cart.cart.map(async (item) => {
-//         if (item.userid === userid) {
-//           let isExisting = await item.products.filter(
-//             (pd) => pd.productName == productName
-//           );
-//           console.log("isExisting", isExisting[0]);
-//           if (isExisting[0] === undefined) {
-//             console.log("3");
-//             item.products.push(productObject);
-//           } else {
-//             console.log("4");
-//             item.products.map((pd) => {
-//               if (pd.productName === productName) {
-//                 pd.quantity = pd.quantity + quantity;
-//               }
-//             });
-//           }
-//         }
-//       });
-//     }
-//     res.status(200).json({ message: "Add to cart success" });
-//   } catch {
-//     res.status(422).json({ message: "Cannot add to cart" });
-//   }
-// });
+router.get("/alluser", ( res) => res.json(db.users.users));
 
-router.get("/alluser", (req, res) => res.json(db.users.users));
-
-router.get("/", (req, res, next) => {
+router.get("/", ( res) => {
   res.send("Respond without authentication");
 });
 
 // Error Handler
-app.use((err, req, res, next) => {
+app.use((err, res) => {
   let statusCode = err.status || 500;
   res.status(statusCode);
   res.json({
